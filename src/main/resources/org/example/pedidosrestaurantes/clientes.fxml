@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.pedidosrestaurantes.ClientesController"
+      style="-fx-background-color: #f4f4f4; -fx-padding: 30px; -fx-spacing: 20px;">
+
+    <!-- Contenedor del título y botón atrás -->
+    <HBox alignment="CENTER" spacing="10">
+        <Label text="Gestión de Clientes"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 2, 2);"/>
+        <Pane HBox.hgrow="ALWAYS"/>  <!-- Espaciador para alinear el botón a la derecha -->
+        <Button text="← Atrás" onAction="#cerrarVentana"
+                style="-fx-font-size: 14px; -fx-background-color: #f80000;
+                       -fx-text-fill: white; -fx-padding: 8px 15px;
+                       -fx-border-radius: 8px; -fx-background-radius: 8px;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Formulario de Clientes -->
+    <GridPane hgap="15" vgap="15" alignment="CENTER"
+              style="-fx-background-color: white; -fx-padding: 20px;
+                     -fx-border-radius: 10px; -fx-background-radius: 10px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 5, 5);">
+
+        <Label text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtId" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="1"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="2"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtTelefono" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Dirección:" GridPane.columnIndex="0" GridPane.rowIndex="3"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtDireccion" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <!-- Botones con estilo -->
+        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarCliente"
+                    style="-fx-font-size: 16px; -fx-background-color: #4CAF50;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+            <Button text="Buscar" fx:id="btnBuscar" onAction="#buscarCliente"
+                    style="-fx-font-size: 16px; -fx-background-color: #2196F3;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+            <Button text="Actualizar" fx:id="btnActualizar" onAction="#actualizarCliente"
+                    style="-fx-font-size: 16px; -fx-background-color: #FF9800;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+            <Button text="Eliminar" fx:id="btnEliminar" onAction="#eliminarCliente"
+                    style="-fx-font-size: 16px; -fx-background-color: #F44336;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+        </HBox>
+    </GridPane>
+
+    <!-- Tabla de Clientes -->
+    <TableView fx:id="tableClientes"
+               style="-fx-background-color: white; -fx-padding: 10px;
+                      -fx-border-radius: 10px; -fx-background-radius: 10px;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 5, 5);">
+        <columns>
+            <TableColumn text="ID" fx:id="colID"/>
+            <TableColumn text="Nombre" fx:id="colNombre"/>
+            <TableColumn text="Teléfono" fx:id="colTelefono"/>
+            <TableColumn text="Dirección" fx:id="colDireccion"/>
+        </columns>
+    </TableView>
+
+</VBox>
