@@ -1,4 +1,4 @@
-package org.example.pedidosrestaurantes;
+package org.example.pedidosrestaurantes.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,8 +23,15 @@ public class MainController {
     }
 
     @FXML
-    public void mostrarProductos() {
-        System.out.println("Gestión de Productos aún no implementada.");
+    public void mostrarProductos() throws IOException {
+        // Cargar la vista de productos en una nueva ventana
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pedidosrestaurantes/productos.fxml"));
+        Parent root = loader.load();
+
+        Stage productosStage = new Stage();
+        productosStage.setTitle("Gestión de Productos");
+        productosStage.setScene(new Scene(root, 900, 600));
+        productosStage.show();
     }
 
     @FXML

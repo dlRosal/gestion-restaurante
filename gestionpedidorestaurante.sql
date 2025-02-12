@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-02-2025 a las 13:59:55
+-- Tiempo de generación: 12-02-2025 a las 13:56:55
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.1.25
 
@@ -34,6 +34,13 @@ CREATE TABLE `clientes` (
   `direccion` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `clientes`
+--
+
+INSERT INTO `clientes` (`id`, `nombre`, `telefono`, `direccion`) VALUES
+(1, 'Valdo', '698632654', 'C/Neftali');
+
 -- --------------------------------------------------------
 
 --
@@ -61,6 +68,14 @@ CREATE TABLE `productos` (
   `precio` varchar(50) NOT NULL,
   `disponibilidad` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`id`, `nombre`, `categoria`, `precio`, `disponibilidad`) VALUES
+(1, 'Pantalones cortos', 'Pantalones', '29.5', '1'),
+(2, 'Camiseta', 'Camiseta', '80.5', '0');
 
 --
 -- Índices para tablas volcadas
@@ -92,7 +107,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
@@ -104,7 +119,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

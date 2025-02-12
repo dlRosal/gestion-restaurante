@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.pedidosrestaurantes.MainController"
+      fx:controller="org.example.pedidosrestaurantes.controllers.MainController"
       style="-fx-background-color: #f4f4f4; -fx-padding: 40px;">
     <!-- Contenedor principal -->
     <VBox alignment="CENTER" spacing="20">

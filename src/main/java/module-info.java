@@ -14,4 +14,8 @@ module org.example.pedidosrestaurantes {
 
     opens org.example.pedidosrestaurantes to javafx.fxml;
     exports org.example.pedidosrestaurantes;
+    exports org.example.pedidosrestaurantes.modelos;
+    opens org.example.pedidosrestaurantes.modelos to javafx.fxml;
+    exports org.example.pedidosrestaurantes.controllers;
+    opens org.example.pedidosrestaurantes.controllers to javafx.fxml;
 }

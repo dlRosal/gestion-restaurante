@@ -1,4 +1,4 @@
-package org.example.pedidosrestaurantes;
+package org.example.pedidosrestaurantes.modelos;
 
 import javafx.beans.property.*;
 
