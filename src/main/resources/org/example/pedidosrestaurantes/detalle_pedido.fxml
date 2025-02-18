@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.pedidosrestaurantes.controllers.DetallePedidosController"
+      style="-fx-background-color: #f4f4f4; -fx-padding: 30px; -fx-spacing: 20px;">
+
+    <!-- Contenedor del título y botón volver -->
+    <HBox alignment="CENTER" spacing="10">
+        <Label text="Detalles del Pedido"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 2, 2);"/>
+        <Pane HBox.hgrow="ALWAYS"/>  <!-- Espaciador para alinear el botón a la derecha -->
+        <Button text="← Volver" onAction="#cerrarVentana"
+                style="-fx-font-size: 14px; -fx-background-color: #FF5722;
+                       -fx-text-fill: white; -fx-padding: 8px 15px;
+                       -fx-border-radius: 8px; -fx-background-radius: 8px;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Tabla de Detalles del Pedido -->
+    <TableView fx:id="tableDetallesPedido"
+               style="-fx-background-color: white; -fx-padding: 10px;
+                      -fx-border-radius: 10px; -fx-background-radius: 10px;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 5, 5);">
+        <columns>
+            <TableColumn text="ID Detalle" fx:id="colIDDetalle" />
+            <TableColumn text="Producto" fx:id="colProducto" />
+            <TableColumn text="Cantidad" fx:id="colCantidad" />
+            <TableColumn text="Precio (€)" fx:id="colPrecio" />
+            <TableColumn text="Subtotal (€)" fx:id="colSubtotal" />
+        </columns>
+    </TableView>
+
+</VBox>

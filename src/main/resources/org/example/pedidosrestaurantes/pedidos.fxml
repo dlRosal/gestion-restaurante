@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.pedidosrestaurantes.controllers.PedidosController"
+      style="-fx-background-color: #f4f4f4; -fx-padding: 30px; -fx-spacing: 20px;">
+
+    <!-- Contenedor del título y botón volver -->
+    <HBox alignment="CENTER" spacing="10">
+        <Label text="Gestión de Pedidos"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 2, 2);"/>
+        <Pane HBox.hgrow="ALWAYS"/>  <!-- Espaciador para alinear el botón a la derecha -->
+        <Button text="← Volver" onAction="#cerrarVentana"
+                style="-fx-font-size: 14px; -fx-background-color: #FF5722;
+                       -fx-text-fill: white; -fx-padding: 8px 15px;
+                       -fx-border-radius: 8px; -fx-background-radius: 8px;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Formulario de Pedidos -->
+    <GridPane hgap="15" vgap="15" alignment="CENTER"
+              style="-fx-background-color: white; -fx-padding: 20px;
+                     -fx-border-radius: 10px; -fx-background-radius: 10px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 5, 5);">
+
+        <Label text="ID Pedido:" GridPane.columnIndex="0" GridPane.rowIndex="0"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtIdPedido" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Cliente:" GridPane.columnIndex="0" GridPane.rowIndex="1"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <ComboBox fx:id="cmbCliente" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                  style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Fecha Pedido:" GridPane.columnIndex="0" GridPane.rowIndex="2"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <DatePicker fx:id="dpFechaPedido" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                    style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Hora Pedido:" GridPane.columnIndex="0" GridPane.rowIndex="3"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtHoraPedido" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="4"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <ComboBox fx:id="cmbEstado" GridPane.columnIndex="1" GridPane.rowIndex="4"
+                  style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Total (€):" GridPane.columnIndex="0" GridPane.rowIndex="5"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtTotal" GridPane.columnIndex="1" GridPane.rowIndex="5"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"
+                   editable="false"/>
+
+        <!-- Botones CRUD -->
+        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarPedido"
+                    style="-fx-font-size: 16px; -fx-background-color: #4CAF50;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+            <Button text="Buscar" fx:id="btnBuscar" onAction="#buscarPedido"
+                    style="-fx-font-size: 16px; -fx-background-color: #2196F3;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+            <Button text="Actualizar" fx:id="btnActualizar" onAction="#actualizarPedido"
+                    style="-fx-font-size: 16px; -fx-background-color: #FF9800;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+            <Button text="Eliminar" fx:id="btnEliminar" onAction="#eliminarPedido"
+                    style="-fx-font-size: 16px; -fx-background-color: #F44336;
+                           -fx-text-fill: white; -fx-padding: 10px 15px;
+                           -fx-border-radius: 8px; -fx-background-radius: 8px;
+                           -fx-cursor: hand;"/>
+        </HBox>
+    </GridPane>
+
+    <!-- Tabla de Pedidos -->
+    <TableView fx:id="tablePedidos"
+               style="-fx-background-color: white; -fx-padding: 10px;
+                      -fx-border-radius: 10px; -fx-background-radius: 10px;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 5, 5);">
+        <columns>
+            <TableColumn text="ID" fx:id="colIDPedido"/>
+            <TableColumn text="Cliente" fx:id="colCliente"/>
+            <TableColumn text="Fecha" fx:id="colFechaPedido"/>
+            <TableColumn text="Hora" fx:id="colHoraPedido"/>
+            <TableColumn text="Estado" fx:id="colEstado"/>
+            <TableColumn text="Total" fx:id="colTotal"/>
+        </columns>
+    </TableView>
+
+    <!-- Botón para ver detalles de un pedido -->
+    <Button text="Ver Detalles" fx:id="btnVerDetalles" onAction="#verDetallesPedido"
+            style="-fx-font-size: 16px; -fx-background-color: #673AB7;
+                   -fx-text-fill: white; -fx-padding: 10px 15px;
+                   -fx-border-radius: 8px; -fx-background-radius: 8px;
+                   -fx-cursor: hand;"/>
+
+</VBox>

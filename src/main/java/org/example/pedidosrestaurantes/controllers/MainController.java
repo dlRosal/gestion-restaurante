@@ -18,7 +18,7 @@ public class MainController {
 
         Stage clienteStage = new Stage();
         clienteStage.setTitle("Gestión de Clientes");
-        clienteStage.setScene(new Scene(root, 900, 600));
+        clienteStage.setScene(new Scene(root, 1200, 900));
         clienteStage.show();
     }
 
