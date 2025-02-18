@@ -30,12 +30,19 @@ public class MainController {
 
         Stage productosStage = new Stage();
         productosStage.setTitle("Gestión de Productos");
-        productosStage.setScene(new Scene(root, 900, 600));
+        productosStage.setScene(new Scene(root, 1200, 900));
         productosStage.show();
     }
 
     @FXML
-    public void mostrarPedidos() {
-        System.out.println("Gestión de Pedidos aún no implementada.");
+    public void mostrarPedidos() throws IOException {
+        // Cargar la vista de pedidos en una nueva ventana
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pedidosrestaurantes/pedidos.fxml"));
+        Parent root = loader.load();
+
+        Stage pedidosStage = new Stage();
+        pedidosStage.setTitle("Gestión de Pedidos");
+        pedidosStage.setScene(new Scene(root, 1200, 900));
+        pedidosStage.show();
     }
 }

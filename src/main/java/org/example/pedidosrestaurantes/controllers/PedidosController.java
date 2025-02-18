@@ -3,11 +3,15 @@ package org.example.pedidosrestaurantes.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.pedidosrestaurantes.DatabaseConnection;
 import org.example.pedidosrestaurantes.modelos.Pedido;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -54,9 +58,6 @@ public class PedidosController {
         tablePedidos.setItems(listaPedidos);
     }
 
-    /**
-     * Cargar los clientes en el ComboBox desde la base de datos.
-     */
     private void cargarClientes() {
         listaClientes.clear();
         try (Connection conn = DatabaseConnection.getConnection();
@@ -71,9 +72,6 @@ public class PedidosController {
         cmbCliente.setItems(listaClientes);
     }
 
-    /**
-     * Cargar los pedidos desde la base de datos en la TableView.
-     */
     private void cargarPedidos() {
         listaPedidos.clear();
         try (Connection conn = DatabaseConnection.getConnection();
@@ -95,9 +93,6 @@ public class PedidosController {
         tablePedidos.setItems(listaPedidos);
     }
 
-    /**
-     * Método para guardar un nuevo pedido en la base de datos.
-     */
     @FXML
     private void guardarPedido() {
         String query = "INSERT INTO Pedidos (id_cliente, fecha_pedido, hora_pedido, total, estado) VALUES (?, ?, ?, ?, ?)";
@@ -109,7 +104,7 @@ public class PedidosController {
             stmt.setInt(1, idCliente);
             stmt.setDate(2, Date.valueOf(dpFechaPedido.getValue()));
             stmt.setTime(3, Time.valueOf(txtHoraPedido.getText()));
-            stmt.setDouble(4, 0.00); // El total se calculará con los detalles
+            stmt.setDouble(4, 0.00);
             stmt.setString(5, cmbEstado.getValue());
             stmt.executeUpdate();
 
@@ -120,9 +115,6 @@ public class PedidosController {
         }
     }
 
-    /**
-     * Método para buscar un pedido por su ID.
-     */
     @FXML
     private void buscarPedido() {
         String query = "SELECT * FROM Pedidos WHERE id_pedido = ?";
@@ -145,9 +137,6 @@ public class PedidosController {
         }
     }
 
-    /**
-     * Método para actualizar un pedido en la base de datos.
-     */
     @FXML
     private void actualizarPedido() {
         String query = "UPDATE Pedidos SET id_cliente=?, fecha_pedido=?, hora_pedido=?, estado=? WHERE id_pedido=?";
@@ -170,9 +159,6 @@ public class PedidosController {
         }
     }
 
-    /**
-     * Método para eliminar un pedido de la base de datos.
-     */
     @FXML
     private void eliminarPedido() {
         String query = "DELETE FROM Pedidos WHERE id_pedido=?";
@@ -187,9 +173,30 @@ public class PedidosController {
         }
     }
 
-    /**
-     * Método para limpiar los campos del formulario.
-     */
+    @FXML
+    private void verDetallesPedido() {
+        Pedido pedidoSeleccionado = tablePedidos.getSelectionModel().getSelectedItem();
+
+        if (pedidoSeleccionado != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pedidosrestaurantes/detalle_pedido.fxml"));
+                Parent root = loader.load();
+
+                DetallePedidosController controller = loader.getController();
+                controller.cargarDetallesPedido(pedidoSeleccionado.getIdPedido());
+
+                Stage stage = new Stage();
+                stage.setTitle("Detalles del Pedido");
+                stage.setScene(new Scene(root, 600, 400));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mostrarAlerta("Selecciona un pedido", "Debes seleccionar un pedido para ver los detalles.");
+        }
+    }
+
     private void limpiarCampos() {
         txtIdPedido.clear();
         cmbCliente.setValue(null);
@@ -199,18 +206,12 @@ public class PedidosController {
         cmbEstado.setValue(null);
     }
 
-    /**
-     * Método para cerrar la ventana de pedidos.
-     */
     @FXML
     private void cerrarVentana() {
         Stage stage = (Stage) txtIdPedido.getScene().getWindow();
         stage.close();
     }
 
-    /**
-     * Método para mostrar alertas.
-     */
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(titulo);
