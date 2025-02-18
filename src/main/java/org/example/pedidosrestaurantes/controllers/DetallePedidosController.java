@@ -11,64 +11,76 @@ import org.example.pedidosrestaurantes.modelos.DetallePedido;
 import java.sql.*;
 
 public class DetallePedidosController {
-
     @FXML
     private TableView<DetallePedido> tableDetallesPedido;
     @FXML
-    private TableColumn<DetallePedido, Integer> colIDDetalle, colCantidad;
+    private TableColumn<DetallePedido, Integer> colIDDetalle;
     @FXML
     private TableColumn<DetallePedido, String> colProducto;
     @FXML
-    private TableColumn<DetallePedido, Double> colPrecio, colSubtotal;
+    private TableColumn<DetallePedido, Integer> colCantidad;
+    @FXML
+    private TableColumn<DetallePedido, Double> colPrecio;
+    @FXML
+    private TableColumn<DetallePedido, Double> colSubtotal;
 
-    private ObservableList<DetallePedido> listaDetalles = FXCollections.observableArrayList();
-    private int idPedido;  // Se recibe desde PedidosController
+    private Connection conexion;
+    private int idPedido;
 
+    @FXML
     public void initialize() {
-        colIDDetalle.setCellValueFactory(cellData -> cellData.getValue().idDetalleProperty().asObject());
-        colProducto.setCellValueFactory(cellData -> cellData.getValue().idProductoProperty().asString());
+        conexion = DatabaseConnection.getConnection();
+        if (conexion == null) {
+            System.out.println("Error: No se pudo establecer la conexión con la base de datos.");
+            return;
+        }
+
+        // Configurar las columnas de la TableView
+        colIDDetalle.setCellValueFactory(cellData -> cellData.getValue().idDetallePedidoProperty().asObject());
+        colProducto.setCellValueFactory(cellData -> cellData.getValue().productoProperty());
         colCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
         colPrecio.setCellValueFactory(cellData -> cellData.getValue().precioProperty().asObject());
         colSubtotal.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty().asObject());
-
-        tableDetallesPedido.setItems(listaDetalles);
     }
 
-    /**
-     * Cargar los detalles del pedido seleccionado.
-     * @param idPedido ID del pedido a consultar.
-     */
     public void cargarDetallesPedido(int idPedido) {
         this.idPedido = idPedido;
-        listaDetalles.clear();
+        ObservableList<DetallePedido> listaDetalles = FXCollections.observableArrayList();
 
-        String query = "SELECT d.id_detalle, d.id_producto, p.nombre, d.cantidad, d.precio, (d.cantidad * d.precio) AS subtotal " +
+        String sql = "SELECT d.idDetallePedido, p.nombre AS nombre_producto, d.cantidad, d.precio, d.subtotal " +
                 "FROM DetallePedidos d " +
-                "JOIN Productos p ON d.id_producto = p.id " +
-                "WHERE d.id_pedido = ?";
+                "INNER JOIN Productos p ON d.idProducto = p.id " +
+                "WHERE d.idPedido = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
             stmt.setInt(1, idPedido);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                listaDetalles.add(new DetallePedido(
-                        rs.getInt("id_detalle"),
-                        idPedido,
-                        rs.getInt("id_producto"),
+                DetallePedido detalle = new DetallePedido(
+                        rs.getInt("idDetallePedido"),
+                        rs.getString("nombre_producto"),
                         rs.getInt("cantidad"),
-                        rs.getDouble("precio")
-                ));
+                        rs.getDouble("precio"),
+                        rs.getDouble("subtotal")
+                );
+                listaDetalles.add(detalle);
             }
+
+            if (listaDetalles.isEmpty()) {
+                System.out.println("Advertencia: No hay productos asociados a este pedido.");
+            } else {
+                System.out.println("Detalles del pedido cargados correctamente.");
+            }
+
+            tableDetallesPedido.setItems(listaDetalles);
+
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error al cargar los detalles del pedido.");
         }
     }
 
-    /**
-     * Cerrar la ventana y regresar a la gestión de pedidos.
-     */
     @FXML
     private void cerrarVentana() {
         Stage stage = (Stage) tableDetallesPedido.getScene().getWindow();

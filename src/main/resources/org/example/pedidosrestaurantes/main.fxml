@@ -45,7 +45,7 @@
 
         <!-- Imagen debajo de los botones -->
         <ImageView fx:id="imagenRestaurante"
-                   fitWidth="600" fitHeight="450"
+                   fitWidth="1000" fitHeight="850"
                    preserveRatio="true"
                    style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 5, 5);">
             <image>

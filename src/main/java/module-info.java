@@ -11,6 +11,7 @@ module org.example.pedidosrestaurantes {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires java.desktop;
 
     opens org.example.pedidosrestaurantes to javafx.fxml;
     exports org.example.pedidosrestaurantes;

@@ -13,8 +13,8 @@
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;
                       -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 2, 2);"/>
         <Pane HBox.hgrow="ALWAYS"/>  <!-- Espaciador para alinear el botón a la derecha -->
-        <Button text="← Volver" onAction="#cerrarVentana"
-                style="-fx-font-size: 14px; -fx-background-color: #FF5722;
+        <Button text="← Atrás" onAction="#cerrarVentana"
+                style="-fx-font-size: 14px; -fx-background-color: #f80000;
                        -fx-text-fill: white; -fx-padding: 8px 15px;
                        -fx-border-radius: 8px; -fx-background-radius: 8px;
                        -fx-cursor: hand;"/>
