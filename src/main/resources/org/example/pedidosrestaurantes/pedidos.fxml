@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -13,12 +12,12 @@
         <Label text="Gestión de Pedidos"
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;
                       -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 2, 2);"/>
-        <Pane HBox.hgrow="ALWAYS"/>  <!-- Espaciador para alinear el botón a la derecha -->
+        <Pane HBox.hgrow="ALWAYS"/>
         <Button text="← Atrás" onAction="#cerrarVentana"
                 style="-fx-font-size: 14px; -fx-background-color: #f80000;
-                       -fx-text-fill: white; -fx-padding: 8px 15px;
-                       -fx-border-radius: 8px; -fx-background-radius: 8px;
-                       -fx-cursor: hand;"/>
+               -fx-text-fill: white; -fx-padding: 8px 15px;
+               -fx-border-radius: 8px; -fx-background-radius: 8px;
+               -fx-cursor: hand;"/>
     </HBox>
 
     <!-- Formulario de Pedidos -->
@@ -52,57 +51,63 @@
         <ComboBox fx:id="cmbEstado" GridPane.columnIndex="1" GridPane.rowIndex="4"
                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
 
-        <Label text="Total (€):" GridPane.columnIndex="0" GridPane.rowIndex="5"
+        <Label text="Producto:" GridPane.columnIndex="0" GridPane.rowIndex="5"
                style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-        <TextField fx:id="txtTotal" GridPane.columnIndex="1" GridPane.rowIndex="5"
+        <HBox GridPane.columnIndex="1" GridPane.rowIndex="5" spacing="10">
+            <ComboBox fx:id="cmbProducto"
+                      style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+            <Button text="Agregar" fx:id="btnAgregarProducto" onAction="#agregarProducto"
+                    style="-fx-font-size: 14px; -fx-background-color: #4CAF50;
+                           -fx-text-fill: white; -fx-padding: 8px 12px;"/>
+            <Button text="Eliminar" fx:id="btnEliminarProducto" onAction="#eliminarProducto"
+                    style="-fx-font-size: 14px; -fx-background-color: #F44336;
+                           -fx-text-fill: white; -fx-padding: 8px 12px;"/>
+        </HBox>
+
+        <Label text="Cantidad:" GridPane.columnIndex="0" GridPane.rowIndex="6"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtCantidad" GridPane.columnIndex="1" GridPane.rowIndex="6"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"/>
+
+        <Label text="Total (€):" GridPane.columnIndex="0" GridPane.rowIndex="7"
+               style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <TextField fx:id="txtTotal" GridPane.columnIndex="1" GridPane.rowIndex="7"
                    style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-background-radius: 5px;"
                    editable="false"/>
 
-        <!-- Botones CRUD -->
-        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="6">
-            <Button text="Guardar" fx:id="btnGuardar" onAction="#guardarPedido"
+        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="8">
+            <Button text="Guardar Pedido" fx:id="btnGuardarPedido" onAction="#guardarPedido"
                     style="-fx-font-size: 16px; -fx-background-color: #4CAF50;
-                           -fx-text-fill: white; -fx-padding: 10px 15px;
-                           -fx-border-radius: 8px; -fx-background-radius: 8px;
-                           -fx-cursor: hand;"/>
-            <Button text="Buscar" fx:id="btnBuscar" onAction="#buscarPedido"
+                           -fx-text-fill: white; -fx-padding: 10px 15px;"/>
+            <Button text="Buscar Pedido" fx:id="btnBuscarPedido" onAction="#buscarPedido"
                     style="-fx-font-size: 16px; -fx-background-color: #2196F3;
-                           -fx-text-fill: white; -fx-padding: 10px 15px;
-                           -fx-border-radius: 8px; -fx-background-radius: 8px;
-                           -fx-cursor: hand;"/>
-            <Button text="Actualizar" fx:id="btnActualizar" onAction="#actualizarPedido"
+                           -fx-text-fill: white; -fx-padding: 10px 15px;"/>
+            <Button text="Actualizar Pedido" fx:id="btnActualizarPedido" onAction="#actualizarPedido"
                     style="-fx-font-size: 16px; -fx-background-color: #FF9800;
-                           -fx-text-fill: white; -fx-padding: 10px 15px;
-                           -fx-border-radius: 8px; -fx-background-radius: 8px;
-                           -fx-cursor: hand;"/>
-            <Button text="Eliminar" fx:id="btnEliminar" onAction="#eliminarPedido"
+                           -fx-text-fill: white; -fx-padding: 10px 15px;"/>
+            <Button text="Eliminar Pedido" fx:id="btnEliminarPedido" onAction="#eliminarPedido"
                     style="-fx-font-size: 16px; -fx-background-color: #F44336;
-                           -fx-text-fill: white; -fx-padding: 10px 15px;
-                           -fx-border-radius: 8px; -fx-background-radius: 8px;
-                           -fx-cursor: hand;"/>
+                           -fx-text-fill: white; -fx-padding: 10px 15px;"/>
         </HBox>
+
     </GridPane>
 
     <!-- Tabla de Pedidos -->
-    <TableView fx:id="tablePedidos"
-               style="-fx-background-color: white; -fx-padding: 10px;
-                      -fx-border-radius: 10px; -fx-background-radius: 10px;
-                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 5, 5);">
+    <TableView fx:id="tablePedidos">
         <columns>
-            <TableColumn text="ID" fx:id="colIDPedido"/>
+            <TableColumn text="ID Pedido" fx:id="colIDPedido"/>
             <TableColumn text="Cliente" fx:id="colCliente"/>
-            <TableColumn text="Fecha" fx:id="colFechaPedido"/>
-            <TableColumn text="Hora" fx:id="colHoraPedido"/>
+            <TableColumn text="Fecha Pedido" fx:id="colFechaPedido"/>
+            <TableColumn text="Hora Pedido" fx:id="colHoraPedido"/>
             <TableColumn text="Estado" fx:id="colEstado"/>
-            <TableColumn text="Total" fx:id="colTotal"/>
+            <TableColumn text="Total (€)" fx:id="colTotal"/>
         </columns>
     </TableView>
 
-    <!-- Botón para ver detalles de un pedido -->
-    <Button text="Ver Detalles" fx:id="btnVerDetalles" onAction="#verDetallesPedido"
+    <!-- Botón para ver detalles del pedido -->
+    <Button text="Ver Detalles del Pedido" fx:id="btnVerDetalles" onAction="#verDetallesPedido"
             style="-fx-font-size: 16px; -fx-background-color: #673AB7;
-                   -fx-text-fill: white; -fx-padding: 10px 15px;
-                   -fx-border-radius: 8px; -fx-background-radius: 8px;
-                   -fx-cursor: hand;"/>
+               -fx-text-fill: white; -fx-padding: 10px 15px;
+               -fx-border-radius: 8px; -fx-background-radius: 8px;"/>
 
 </VBox>

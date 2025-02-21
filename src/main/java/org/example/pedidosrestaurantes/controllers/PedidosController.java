@@ -103,6 +103,7 @@ public class PedidosController {
         }
         return -1;
     }
+
     private double obtenerPrecioProducto(int idProducto) {
         String sql = "SELECT precio FROM Productos WHERE id = ?";
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -116,6 +117,7 @@ public class PedidosController {
         }
         return 0.0;
     }
+
 
 
 
@@ -373,6 +375,122 @@ public class PedidosController {
             return -1;
         }
     }
+    private void guardarProductoEnPedido(int idPedido, int idProducto, int cantidad, double precio, double subtotal) {
+        String sql = "INSERT INTO DetallePedidos (idPedido, idProducto, cantidad, precio, subtotal) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setInt(1, idPedido);
+            stmt.setInt(2, idProducto);
+            stmt.setInt(3, cantidad);
+            stmt.setDouble(4, precio);
+            stmt.setDouble(5, subtotal);
+            stmt.executeUpdate();
+
+            mostrarAlerta("Éxito", "Producto agregado al pedido correctamente.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo agregar el producto al pedido.");
+        }
+    }
+
+
+    @FXML
+    private void agregarProducto() {
+        // Validar que haya un producto seleccionado y cantidad ingresada
+        String productoSeleccionado = cmbProducto.getValue();
+        if (productoSeleccionado == null || txtCantidad.getText().isEmpty()) {
+            mostrarAlerta("Error", "Debe seleccionar un producto y una cantidad válida.");
+            return;
+        }
+
+        // Obtener la cantidad ingresada y validarla
+        int cantidad;
+        try {
+            cantidad = Integer.parseInt(txtCantidad.getText());
+            if (cantidad <= 0) {
+                mostrarAlerta("Error", "La cantidad debe ser mayor a 0.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "Ingrese un número válido en la cantidad.");
+            return;
+        }
+
+        // Obtener el ID del pedido seleccionado
+        int idPedido;
+        try {
+            idPedido = Integer.parseInt(txtIdPedido.getText());
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "Debe seleccionar un pedido válido antes de agregar productos.");
+            return;
+        }
+
+        // Obtener el ID del producto usando su nombre
+        int idProducto = obtenerIdProducto(productoSeleccionado);
+        if (idProducto == -1) {
+            mostrarAlerta("Error", "No se pudo encontrar el ID del producto.");
+            return;
+        }
+
+        // Obtener el precio del producto usando el ID
+        double precio = obtenerPrecioProducto(idProducto);
+        double subtotal = cantidad * precio;
+
+        // Guardar el producto en la base de datos
+        guardarProductoEnPedido(idPedido, idProducto, cantidad, precio, subtotal);
+
+        // Actualizar el total del pedido
+        actualizarTotalPedido(idPedido);
+
+    }
+    @FXML
+    private void eliminarProducto() {
+        // Obtener el producto seleccionado del ComboBox
+        String productoSeleccionado = cmbProducto.getValue();
+        if (productoSeleccionado == null) {
+            mostrarAlerta("Error", "Debe seleccionar un producto para eliminar.");
+            return;
+        }
+
+        // Obtener el ID del pedido desde el campo de texto
+        int idPedido;
+        try {
+            idPedido = Integer.parseInt(txtIdPedido.getText());
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "Debe seleccionar un pedido válido antes de eliminar productos.");
+            return;
+        }
+
+        // Obtener el ID del producto seleccionado
+        int idProducto = obtenerIdProducto(productoSeleccionado);
+        if (idProducto == -1) {
+            mostrarAlerta("Error", "No se pudo encontrar el ID del producto.");
+            return;
+        }
+
+        // Consulta SQL para eliminar el producto del pedido
+        String sql = "DELETE FROM DetallePedidos WHERE idPedido = ? AND idProducto = ? LIMIT 1";
+
+        try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setInt(1, idPedido);
+            stmt.setInt(2, idProducto);
+
+            int filasAfectadas = stmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                mostrarAlerta("Éxito", "Producto eliminado del pedido correctamente.");
+
+                // 🔥 🔥 🔥 Llamamos a actualizarTotalPedido para recalcular el total después de eliminar
+                actualizarTotalPedido(idPedido);
+            } else {
+                mostrarAlerta("Error", "El producto no se encontró en el pedido.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo eliminar el producto del pedido.");
+        }
+    }
+
+
+
     @FXML
     private void verDetallesPedido() {
         Pedido pedidoSeleccionado = tablePedidos.getSelectionModel().getSelectedItem();
@@ -397,6 +515,13 @@ public class PedidosController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
 
