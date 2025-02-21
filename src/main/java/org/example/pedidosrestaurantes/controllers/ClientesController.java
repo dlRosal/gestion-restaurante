@@ -23,6 +23,9 @@ public class ClientesController {
 
     private ObservableList<Cliente> listaClientes = FXCollections.observableArrayList();
 
+    /**
+     * Método de inicialización que configura las columnas de la tabla y carga los clientes.
+     */
     public void initialize() {
         colID.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         colNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
@@ -31,14 +34,22 @@ public class ClientesController {
         cargarClientes();
     }
 
+    /**
+     * Carga los clientes desde la base de datos y los muestra en la tabla.
+     */
     private void cargarClientes() {
         listaClientes.clear();
+        String query = "SELECT * FROM clientes";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM clientes")) {
+             ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                listaClientes.add(new Cliente(rs.getInt("id"), rs.getString("nombre"),
-                        rs.getString("telefono"), rs.getString("direccion")));
+                listaClientes.add(new Cliente(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("telefono"),
+                        rs.getString("direccion")
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,6 +57,9 @@ public class ClientesController {
         tableClientes.setItems(listaClientes);
     }
 
+    /**
+     * Guarda un nuevo cliente en la base de datos.
+     */
     @FXML
     private void guardarCliente() {
         String query = "INSERT INTO clientes (nombre, telefono, direccion) VALUES (?, ?, ?)";
@@ -55,12 +69,15 @@ public class ClientesController {
             stmt.setString(2, txtTelefono.getText());
             stmt.setString(3, txtDireccion.getText());
             stmt.executeUpdate();
-            cargarClientes();
+            cargarClientes(); // Recargar la lista tras la inserción
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Busca un cliente por su ID y muestra sus datos en los campos de texto.
+     */
     @FXML
     private void buscarCliente() {
         String query = "SELECT * FROM clientes WHERE id = ?";
@@ -80,6 +97,9 @@ public class ClientesController {
         }
     }
 
+    /**
+     * Actualiza los datos de un cliente existente en la base de datos.
+     */
     @FXML
     private void actualizarCliente() {
         String query = "UPDATE clientes SET nombre=?, telefono=?, direccion=? WHERE id=?";
@@ -90,12 +110,15 @@ public class ClientesController {
             stmt.setString(3, txtDireccion.getText());
             stmt.setInt(4, Integer.parseInt(txtId.getText()));
             stmt.executeUpdate();
-            cargarClientes();
+            cargarClientes(); // Recargar la lista tras la actualización
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Elimina un cliente de la base de datos.
+     */
     @FXML
     private void eliminarCliente() {
         String query = "DELETE FROM clientes WHERE id=?";
@@ -103,15 +126,18 @@ public class ClientesController {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, Integer.parseInt(txtId.getText()));
             stmt.executeUpdate();
-            cargarClientes();
+            cargarClientes(); // Recargar la lista tras la eliminación
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Cierra la ventana actual.
+     */
     @FXML
     private void cerrarVentana() {
-        Stage stage = (Stage) txtId.getScene().getWindow(); // Obtener la ventana actual
-        stage.close(); // Cerrar la ventana
+        Stage stage = (Stage) txtId.getScene().getWindow();
+        stage.close();
     }
-
 }

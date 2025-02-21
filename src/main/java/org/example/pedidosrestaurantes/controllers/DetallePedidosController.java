@@ -27,6 +27,9 @@ public class DetallePedidosController {
     private Connection conexion;
     private int idPedido;
 
+    /**
+     * Método de inicialización que configura la conexión a la base de datos y las columnas de la tabla.
+     */
     @FXML
     public void initialize() {
         conexion = DatabaseConnection.getConnection();
@@ -43,6 +46,10 @@ public class DetallePedidosController {
         colSubtotal.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty().asObject());
     }
 
+    /**
+     * Carga los detalles de un pedido específico en la tabla.
+     * @param idPedido Identificador del pedido.
+     */
     public void cargarDetallesPedido(int idPedido) {
         this.idPedido = idPedido;
         ObservableList<DetallePedido> listaDetalles = FXCollections.observableArrayList();
@@ -81,6 +88,9 @@ public class DetallePedidosController {
         }
     }
 
+    /**
+     * Cierra la ventana actual.
+     */
     @FXML
     private void cerrarVentana() {
         Stage stage = (Stage) tableDetallesPedido.getScene().getWindow();

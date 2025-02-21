@@ -18,30 +18,26 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class PedidosController {
-    @FXML
-    private TextField txtIdPedido, txtHoraPedido, txtCantidad, txtTotal;
-    @FXML
-    private ComboBox<String> cmbCliente, cmbEstado, cmbProducto;
-    @FXML
-    private DatePicker dpFechaPedido;
-    @FXML
-    private TableView<Pedido> tablePedidos;
-    @FXML
-    private TableColumn<Pedido, Integer> colIDPedido;
-    @FXML
-    private TableColumn<Pedido, String> colCliente;
-    @FXML
-    private TableColumn<Pedido, LocalDate> colFechaPedido;
-    @FXML
-    private TableColumn<Pedido, LocalTime> colHoraPedido;
-    @FXML
-    private TableColumn<Pedido, String> colEstado;
-    @FXML
-    private TableColumn<Pedido, Double> colTotal;
 
-    private Connection conexion;
+    // Componentes FXML
+    @FXML private TextField txtIdPedido, txtHoraPedido, txtCantidad, txtTotal;
+    @FXML private ComboBox<String> cmbCliente, cmbEstado, cmbProducto;
+    @FXML private DatePicker dpFechaPedido;
+    @FXML private TableView<Pedido> tablePedidos;
+    @FXML private TableColumn<Pedido, Integer> colIDPedido;
+    @FXML private TableColumn<Pedido, String> colCliente;
+    @FXML private TableColumn<Pedido, LocalDate> colFechaPedido;
+    @FXML private TableColumn<Pedido, LocalTime> colHoraPedido;
+    @FXML private TableColumn<Pedido, String> colEstado;
+    @FXML private TableColumn<Pedido, Double> colTotal;
 
+    private Connection conexion; // Conexión a la base de datos
+
+    /**
+     * Inicializa el controlador. Configura las columnas de la tabla, la conexión a la base de datos y carga los datos iniciales.
+     */
     public void initialize() {
+        // Vincula las columnas de la tabla con las propiedades de la clase Pedido
         colIDPedido.setCellValueFactory(new PropertyValueFactory<>("idPedido"));
         colCliente.setCellValueFactory(new PropertyValueFactory<>("cliente"));
         colFechaPedido.setCellValueFactory(new PropertyValueFactory<>("fechaPedido"));
@@ -49,18 +45,23 @@ public class PedidosController {
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
 
+        // Establece la conexión a la base de datos
         conexion = DatabaseConnection.getConnection();
         if (conexion == null) {
             System.out.println("Error: No se pudo establecer la conexión con la base de datos.");
             return;
         }
+
+        // Carga los datos iniciales
         cargarClientes();
         cargarProductos();
         cargarEstados();
         cargarPedidos();
     }
 
-
+    /**
+     * Carga los nombres de los clientes en el ComboBox.
+     */
     private void cargarClientes() {
         ObservableList<String> clientes = FXCollections.observableArrayList();
         String sql = "SELECT nombre FROM Clientes";
@@ -74,6 +75,9 @@ public class PedidosController {
         }
     }
 
+    /**
+     * Carga los productos disponibles en el ComboBox.
+     */
     private void cargarProductos() {
         ObservableList<String> productos = FXCollections.observableArrayList();
         String sql = "SELECT nombre FROM Productos WHERE disponibilidad = 1";
@@ -87,9 +91,19 @@ public class PedidosController {
         }
     }
 
+    /**
+     * Carga los estados de los pedidos en el ComboBox.
+     */
     private void cargarEstados() {
         cmbEstado.setItems(FXCollections.observableArrayList("Pendiente", "En preparación", "Entregado"));
     }
+
+    /**
+     * Obtiene el ID de un producto basado en su nombre.
+     *
+     * @param nombreProducto El nombre del producto.
+     * @return El ID del producto, o -1 si no se encuentra.
+     */
     private int obtenerIdProducto(String nombreProducto) {
         String sql = "SELECT id FROM Productos WHERE nombre = ?";
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -104,6 +118,12 @@ public class PedidosController {
         return -1;
     }
 
+    /**
+     * Obtiene el precio de un producto basado en su ID.
+     *
+     * @param idProducto El ID del producto.
+     * @return El precio del producto, o 0.0 si no se encuentra.
+     */
     private double obtenerPrecioProducto(int idProducto) {
         String sql = "SELECT precio FROM Productos WHERE id = ?";
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -118,9 +138,11 @@ public class PedidosController {
         return 0.0;
     }
 
-
-
-
+    /**
+     * Guarda los detalles de un pedido (productos y cantidades) en la base de datos.
+     *
+     * @param idPedido El ID del pedido.
+     */
     private void guardarDetallePedido(int idPedido) {
         if (cmbProducto.getValue() == null || txtCantidad.getText().trim().isEmpty()) {
             System.out.println("Error: Debes seleccionar un producto y especificar una cantidad.");
@@ -128,9 +150,9 @@ public class PedidosController {
         }
 
         try {
-            int idProducto = obtenerIdProducto(cmbProducto.getValue()); // Obtener ID del producto
+            int idProducto = obtenerIdProducto(cmbProducto.getValue());
             int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-            double precio = obtenerPrecioProducto(idProducto); // Obtener precio del producto
+            double precio = obtenerPrecioProducto(idProducto);
 
             String sql = "INSERT INTO DetallePedidos (idPedido, idProducto, cantidad, precio, subtotal) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -138,7 +160,7 @@ public class PedidosController {
                 stmt.setInt(2, idProducto);
                 stmt.setInt(3, cantidad);
                 stmt.setDouble(4, precio);
-                stmt.setDouble(5, cantidad * precio); // Calculamos el subtotal
+                stmt.setDouble(5, cantidad * precio); // Calcula el subtotal
                 stmt.executeUpdate();
             }
 
@@ -150,7 +172,9 @@ public class PedidosController {
         }
     }
 
-
+    /**
+     * Carga todos los pedidos desde la base de datos en la TableView.
+     */
     private void cargarPedidos() {
         ObservableList<Pedido> listaPedidos = FXCollections.observableArrayList();
         String sql = "SELECT p.idPedido, c.nombre AS cliente, p.fechaPedido, p.horaPedido, " +
@@ -177,8 +201,9 @@ public class PedidosController {
         }
     }
 
-
-
+    /**
+     * Guarda un nuevo pedido en la base de datos.
+     */
     @FXML
     private void guardarPedido() {
         if (cmbCliente.getValue() == null || dpFechaPedido.getValue() == null ||
@@ -205,25 +230,29 @@ public class PedidosController {
                 stmt.setString(5, cmbEstado.getValue());
                 stmt.executeUpdate();
 
-                // Obtener el ID del pedido recién insertado
+                // Obtiene el ID del pedido recién insertado
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
                     int idPedido = rs.getInt(1);
-                    guardarDetallePedido(idPedido); // Guardar productos en DetallePedidos
-
-                    // Actualizar el total del pedido después de insertar los productos
-                    actualizarTotalPedido(idPedido);
+                    guardarDetallePedido(idPedido); // Guarda los productos en DetallePedidos
+                    actualizarTotalPedido(idPedido); // Actualiza el total después de insertar los productos
                 }
             }
 
             System.out.println("Pedido guardado exitosamente.");
-            cargarPedidos();
+            cargarPedidos(); // Actualiza la tabla
 
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error al guardar el pedido en la base de datos.");
         }
     }
+
+    /**
+     * Actualiza el monto total de un pedido basado en sus productos.
+     *
+     * @param idPedido El ID del pedido.
+     */
     private void actualizarTotalPedido(int idPedido) {
         String sql = "UPDATE Pedidos SET total = (SELECT SUM(d.cantidad * p.precio) " +
                 "FROM DetallePedidos d INNER JOIN Productos p ON d.idProducto = p.id " +
@@ -238,9 +267,9 @@ public class PedidosController {
         }
     }
 
-
-
-
+    /**
+     * Busca un pedido por su ID y llena los campos del formulario.
+     */
     @FXML
     private void buscarPedido() {
         if (txtIdPedido.getText().trim().isEmpty()) {
@@ -251,7 +280,7 @@ public class PedidosController {
         try {
             int idPedido = Integer.parseInt(txtIdPedido.getText().trim());
 
-            // Obtener datos del pedido desde la tabla Pedidos
+            // Obtiene los datos del pedido
             String sqlPedido = "SELECT p.idPedido, c.nombre AS cliente, p.fechaPedido, p.horaPedido, p.estado, p.total " +
                     "FROM Pedidos p INNER JOIN Clientes c ON p.idCliente = c.id " +
                     "WHERE p.idPedido = ?";
@@ -260,7 +289,7 @@ public class PedidosController {
                 ResultSet rs = stmt.executeQuery();
 
                 if (rs.next()) {
-                    cmbCliente.setValue(rs.getString("cliente")); // Autocompletar cliente
+                    cmbCliente.setValue(rs.getString("cliente"));
                     dpFechaPedido.setValue(rs.getDate("fechaPedido").toLocalDate());
                     txtHoraPedido.setText(rs.getTime("horaPedido").toString());
                     cmbEstado.setValue(rs.getString("estado"));
@@ -271,7 +300,7 @@ public class PedidosController {
                 }
             }
 
-            // Obtener datos del producto desde la tabla DetallePedidos
+            // Obtiene los detalles del producto
             String sqlDetalle = "SELECT pr.nombre AS producto, d.cantidad " +
                     "FROM DetallePedidos d INNER JOIN Productos pr ON d.idProducto = pr.id " +
                     "WHERE d.idPedido = ?";
@@ -280,8 +309,8 @@ public class PedidosController {
                 ResultSet rs = stmt.executeQuery();
 
                 if (rs.next()) {
-                    cmbProducto.setValue(rs.getString("producto")); // Autocompletar producto
-                    txtCantidad.setText(String.valueOf(rs.getInt("cantidad"))); // Autocompletar cantidad
+                    cmbProducto.setValue(rs.getString("producto"));
+                    txtCantidad.setText(String.valueOf(rs.getInt("cantidad")));
                 } else {
                     System.out.println("Advertencia: No hay productos asociados a este pedido.");
                 }
@@ -295,7 +324,9 @@ public class PedidosController {
         }
     }
 
-
+    /**
+     * Actualiza un pedido existente en la base de datos.
+     */
     @FXML
     private void actualizarPedido() {
         String sql = "UPDATE Pedidos SET fechaPedido=?, horaPedido=?, estado=? WHERE idPedido=?";
@@ -305,33 +336,45 @@ public class PedidosController {
             stmt.setString(3, cmbEstado.getValue());
             stmt.setInt(4, Integer.parseInt(txtIdPedido.getText()));
             stmt.executeUpdate();
-            cargarPedidos();
+            cargarPedidos(); // Actualiza la tabla
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Elimina un pedido de la base de datos.
+     */
     @FXML
     private void eliminarPedido() {
         String sql = "DELETE FROM Pedidos WHERE idPedido = ?";
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
             stmt.setInt(1, Integer.parseInt(txtIdPedido.getText()));
             stmt.executeUpdate();
-            cargarPedidos();
+            cargarPedidos(); // Actualiza la tabla
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Cierra la ventana actual.
+     */
     @FXML
     private void cerrarVentana() {
         Stage stage = (Stage) tablePedidos.getScene().getWindow();
         stage.close();
     }
+
+    /**
+     * Calcula el monto total de un pedido basado en sus productos.
+     *
+     * @return El monto total del pedido.
+     */
     private double calcularTotalPedido() {
         if (txtIdPedido.getText().trim().isEmpty()) {
             System.out.println("Error: No hay un ID de pedido válido para calcular el total.");
-            return 0.0;  // Retorna 0 si no hay ID de pedido válido
+            return 0.0;
         }
 
         double total = 0.0;
@@ -353,7 +396,12 @@ public class PedidosController {
         return total;
     }
 
-
+    /**
+     * Obtiene el ID de un cliente basado en su nombre.
+     *
+     * @param nombreCliente El nombre del cliente.
+     * @return El ID del cliente, o -1 si no se encuentra.
+     */
     private int obtenerIdCliente(String nombreCliente) {
         if (nombreCliente == null || nombreCliente.trim().isEmpty()) {
             System.out.println("Error: No se ha seleccionado un cliente.");
@@ -375,6 +423,16 @@ public class PedidosController {
             return -1;
         }
     }
+
+    /**
+     * Guarda un producto en un pedido en la base de datos.
+     *
+     * @param idPedido   El ID del pedido.
+     * @param idProducto El ID del producto.
+     * @param cantidad   La cantidad del producto.
+     * @param precio     El precio del producto.
+     * @param subtotal   El subtotal del producto.
+     */
     private void guardarProductoEnPedido(int idPedido, int idProducto, int cantidad, double precio, double subtotal) {
         String sql = "INSERT INTO DetallePedidos (idPedido, idProducto, cantidad, precio, subtotal) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
@@ -392,17 +450,17 @@ public class PedidosController {
         }
     }
 
-
+    /**
+     * Agrega un producto al pedido actual.
+     */
     @FXML
     private void agregarProducto() {
-        // Validar que haya un producto seleccionado y cantidad ingresada
         String productoSeleccionado = cmbProducto.getValue();
         if (productoSeleccionado == null || txtCantidad.getText().isEmpty()) {
             mostrarAlerta("Error", "Debe seleccionar un producto y una cantidad válida.");
             return;
         }
 
-        // Obtener la cantidad ingresada y validarla
         int cantidad;
         try {
             cantidad = Integer.parseInt(txtCantidad.getText());
@@ -415,7 +473,6 @@ public class PedidosController {
             return;
         }
 
-        // Obtener el ID del pedido seleccionado
         int idPedido;
         try {
             idPedido = Integer.parseInt(txtIdPedido.getText());
@@ -424,34 +481,30 @@ public class PedidosController {
             return;
         }
 
-        // Obtener el ID del producto usando su nombre
         int idProducto = obtenerIdProducto(productoSeleccionado);
         if (idProducto == -1) {
             mostrarAlerta("Error", "No se pudo encontrar el ID del producto.");
             return;
         }
 
-        // Obtener el precio del producto usando el ID
         double precio = obtenerPrecioProducto(idProducto);
         double subtotal = cantidad * precio;
 
-        // Guardar el producto en la base de datos
         guardarProductoEnPedido(idPedido, idProducto, cantidad, precio, subtotal);
-
-        // Actualizar el total del pedido
         actualizarTotalPedido(idPedido);
-
     }
+
+    /**
+     * Elimina un producto del pedido actual.
+     */
     @FXML
     private void eliminarProducto() {
-        // Obtener el producto seleccionado del ComboBox
         String productoSeleccionado = cmbProducto.getValue();
         if (productoSeleccionado == null) {
             mostrarAlerta("Error", "Debe seleccionar un producto para eliminar.");
             return;
         }
 
-        // Obtener el ID del pedido desde el campo de texto
         int idPedido;
         try {
             idPedido = Integer.parseInt(txtIdPedido.getText());
@@ -460,16 +513,13 @@ public class PedidosController {
             return;
         }
 
-        // Obtener el ID del producto seleccionado
         int idProducto = obtenerIdProducto(productoSeleccionado);
         if (idProducto == -1) {
             mostrarAlerta("Error", "No se pudo encontrar el ID del producto.");
             return;
         }
 
-        // Consulta SQL para eliminar el producto del pedido
         String sql = "DELETE FROM DetallePedidos WHERE idPedido = ? AND idProducto = ? LIMIT 1";
-
         try (PreparedStatement stmt = conexion.prepareStatement(sql)) {
             stmt.setInt(1, idPedido);
             stmt.setInt(2, idProducto);
@@ -477,9 +527,7 @@ public class PedidosController {
             int filasAfectadas = stmt.executeUpdate();
             if (filasAfectadas > 0) {
                 mostrarAlerta("Éxito", "Producto eliminado del pedido correctamente.");
-
-                // 🔥 🔥 🔥 Llamamos a actualizarTotalPedido para recalcular el total después de eliminar
-                actualizarTotalPedido(idPedido);
+                actualizarTotalPedido(idPedido); // Recalcula el total
             } else {
                 mostrarAlerta("Error", "El producto no se encontró en el pedido.");
             }
@@ -489,8 +537,9 @@ public class PedidosController {
         }
     }
 
-
-
+    /**
+     * Abre una nueva ventana para mostrar los detalles del pedido seleccionado.
+     */
     @FXML
     private void verDetallesPedido() {
         Pedido pedidoSeleccionado = tablePedidos.getSelectionModel().getSelectedItem();
@@ -503,7 +552,6 @@ public class PedidosController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/pedidosrestaurantes/detalle_pedido.fxml"));
             Parent root = loader.load();
 
-            // Pasar el ID del pedido a DetallePedidosController
             DetallePedidosController controller = loader.getController();
             controller.cargarDetallesPedido(pedidoSeleccionado.getIdPedido());
 
@@ -516,6 +564,13 @@ public class PedidosController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Muestra una alerta con el título y mensaje especificados.
+     *
+     * @param titulo  El título de la alerta.
+     * @param mensaje El mensaje a mostrar.
+     */
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
@@ -523,6 +578,4 @@ public class PedidosController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
-
 }
