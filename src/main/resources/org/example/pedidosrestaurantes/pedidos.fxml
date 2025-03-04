@@ -105,9 +105,25 @@
     </TableView>
 
     <!-- Botón para ver detalles del pedido -->
-    <Button text="Ver Detalles del Pedido" fx:id="btnVerDetalles" onAction="#verDetallesPedido"
-            style="-fx-font-size: 16px; -fx-background-color: #673AB7;
+    <HBox spacing="15" alignment="CENTER" style="-fx-padding: 10px;">
+        <Button text="Ver Detalles del Pedido" fx:id="btnVerDetalles" onAction="#verDetallesPedido"
+                style="-fx-font-size: 16px; -fx-background-color: #673AB7;
+                   -fx-text-fill: white; -fx-padding: 10px 15px;
+                   -fx-border-radius: 8px; -fx-background-radius: 8px;"/>
+
+        <Button text="Generar Reporte de Pedidos en Preparación" fx:id="btnReportePedidosPreparacion" onAction="#generarReportePedidosPreparacion"
+                style="-fx-font-size: 16px; -fx-background-color: #673AB7;
+                   -fx-text-fill: white; -fx-padding: 10px 15px;
+                   -fx-border-radius: 8px; -fx-background-radius: 8px;"/>
+
+        <Button text="Generar Ticket" fx:id="btnGenerarTicket" onAction="#generarTicket"
+                style="-fx-font-size: 16px; -fx-background-color: #4CAF50;
                -fx-text-fill: white; -fx-padding: 10px 15px;
                -fx-border-radius: 8px; -fx-background-radius: 8px;"/>
+
+
+
+    </HBox>
+
 
 </VBox>

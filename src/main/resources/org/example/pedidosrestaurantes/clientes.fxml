@@ -85,4 +85,10 @@
         </columns>
     </TableView>
 
+    <!-- Botón para generar el informe de clientes -->
+    <Button text="Generar Informe" fx:id="btnGenerarInforme" onAction="#generarInformeClientes"
+            style="-fx-font-size: 16px; -fx-background-color: #673AB7;
+                   -fx-text-fill: white; -fx-padding: 10px 15px;
+                   -fx-border-radius: 8px; -fx-background-radius: 8px;
+                   -fx-cursor: hand; -fx-margin-top: 10px;"/>
 </VBox>

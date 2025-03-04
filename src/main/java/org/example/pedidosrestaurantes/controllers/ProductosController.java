@@ -5,10 +5,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.view.JasperViewer;
 import org.example.pedidosrestaurantes.DatabaseConnection;
 import org.example.pedidosrestaurantes.modelos.Producto;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProductosController {
 
@@ -147,4 +151,39 @@ public class ProductosController {
             e.printStackTrace();
         }
     }
+    public void generarReporteStockBajo() {
+        Connection conexion = null;
+        try {
+            // Ruta del archivo .jasper (compilado previamente en Jaspersoft Studio)
+            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\Productos.jasper";
+
+            // Conectar a la base de datos
+            conexion = DatabaseConnection.getConnection();
+            if (conexion == null) {
+                System.out.println("Failed to connect");
+                return;
+            }
+
+            // Parámetros del informe (si los necesitas, agrégalos aquí)
+            Map<String, Object> parameters = new HashMap<>();
+
+            // Llenar el reporte con datos de la base de datos
+            JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conexion);
+
+            // Mostrar el reporte en pantalla
+            JasperViewer.viewReport(print, false);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            System.out.println("Failed to connect");
+        } finally {
+            try {
+                if (conexion != null) conexion.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

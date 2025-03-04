@@ -5,6 +5,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import net.sf.jasperreports.view.JasperViewer;
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import org.example.pedidosrestaurantes.DatabaseConnection;
 import org.example.pedidosrestaurantes.modelos.Cliente;
 
@@ -131,6 +137,55 @@ public class ClientesController {
             e.printStackTrace();
         }
     }
+
+
+
+    @FXML
+    private void generarInformeClientes() {
+        Connection conn = null;
+        try {
+            // Ruta del informe (debe ser un archivo .jasper compilado)
+            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\Clientes.jasper";
+
+            // Obtener conexión a la base de datos
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                mostrarAlerta("Error", "No se pudo conectar a la base de datos.");
+                return;
+            }
+
+            // Parámetros (vacío si no se necesitan)
+            Map<String, Object> parameters = new HashMap<>();
+
+            // Llenar el informe con la conexión a la base de datos
+            JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, parameters, conn);
+
+            // Mostrar el reporte
+            JasperViewer.viewReport(jasperPrint, false);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo generar el informe de clientes.");
+        } finally {
+            // Cerrar la conexión si fue abierta
+            try {
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    // Método para mostrar alertas en la UI
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
+
 
     /**
      * Cierra la ventana actual.

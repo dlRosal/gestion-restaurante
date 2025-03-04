@@ -89,5 +89,10 @@
             <TableColumn text="Disponibilidad" fx:id="colDisponibilidad"/>
         </columns>
     </TableView>
+    <Button text="Generar Reporte de Stock Bajo" fx:id="btnReporteStockBajo" onAction="#generarReporteStockBajo"
+            style="-fx-font-size: 16px; -fx-background-color: #673AB7;
+               -fx-text-fill: white; -fx-padding: 10px 15px;
+               -fx-border-radius: 8px; -fx-background-radius: 8px;"/>
+
 
 </VBox>

@@ -9,13 +9,21 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.example.pedidosrestaurantes.DatabaseConnection;
 import org.example.pedidosrestaurantes.modelos.Pedido;
 
+import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class PedidosController {
 
@@ -564,6 +572,95 @@ public class PedidosController {
             e.printStackTrace();
         }
     }
+    public void generarReportePedidosPreparacion() {
+        Connection conexion = null;
+        try {
+            // Ruta del archivo .jasper (debe estar compilado en Jaspersoft Studio)
+            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\Pedidos_Preparacion.jasper";
+
+            // Obtener conexión
+            conexion = DatabaseConnection.getConnection();
+            if (conexion == null) {
+                mostrarAlerta("Error", "No se pudo conectar a la base de datos.");
+                return;
+            }
+
+            // Parámetros del informe (si necesitas filtros, agrégalos aquí)
+            Map<String, Object> parameters = new HashMap<>();
+
+            // Llenar el reporte con datos
+            JasperPrint print = JasperFillManager.fillReport(reportPath, parameters, conexion);
+
+            // Mostrar el reporte en pantalla
+            JasperViewer.viewReport(print, false);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo generar el informe de pedidos en preparación.");
+        } finally {
+            try {
+                if (conexion != null) conexion.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    public void generarTicket(javafx.event.ActionEvent actionEvent) {
+        // Obtener el pedido seleccionado en la tabla
+        Pedido pedidoSeleccionado = tablePedidos.getSelectionModel().getSelectedItem();
+
+        if (pedidoSeleccionado == null) {
+            mostrarAlerta("Advertencia", "Debes seleccionar un pedido antes de generar el ticket.");
+            return;
+        }
+
+        int idPedido = pedidoSeleccionado.getIdPedido(); // Obtener el ID del pedido
+
+        Connection conexion = null;
+        try {
+            // Ruta correcta del reporte .jasper
+            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\ticketPedido.jasper";
+
+            // Conexión a la base de datos
+            conexion = DatabaseConnection.getConnection();
+            if (conexion == null) {
+                mostrarAlerta("Error", "No se pudo conectar a la base de datos.");
+                return;
+            }
+
+            // **Inicializar el mapa de parámetros y asegurarse de que se envía bien**
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("idPedido", idPedido);
+
+            // **Verificar que el reporte se carga correctamente**
+            File reportFile = new File(reportPath);
+            if (!reportFile.exists()) {
+                mostrarAlerta("Error", "El archivo del informe no se encontró en la ruta especificada.");
+                return;
+            }
+
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportFile);
+
+            // **Ejecutar el informe filtrando por idPedido**
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conexion);
+
+            // **Mostrar el ticket en JasperViewer**
+            JasperViewer.viewReport(jasperPrint, false);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo generar el ticket. Revisa los parámetros y el informe.");
+        } finally {
+            try {
+                if (conexion != null) conexion.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * Muestra una alerta con el título y mensaje especificados.

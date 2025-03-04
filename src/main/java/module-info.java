@@ -12,6 +12,7 @@ module org.example.pedidosrestaurantes {
     requires com.almasb.fxgl.all;
     requires java.sql;
     requires java.desktop;
+    requires net.sf.jasperreports.core;
 
     opens org.example.pedidosrestaurantes to javafx.fxml;
     exports org.example.pedidosrestaurantes;
