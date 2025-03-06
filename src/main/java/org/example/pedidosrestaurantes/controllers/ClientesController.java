@@ -145,7 +145,7 @@ public class ClientesController {
         Connection conn = null;
         try {
             // Ruta del informe (debe ser un archivo .jasper compilado)
-            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\Clientes.jasper";
+            String reportPath = "src/main/resources/Clientes.jasper";
 
             // Obtener conexión a la base de datos
             conn = DatabaseConnection.getConnection();

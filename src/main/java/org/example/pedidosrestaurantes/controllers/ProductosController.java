@@ -155,7 +155,7 @@ public class ProductosController {
         Connection conexion = null;
         try {
             // Ruta del archivo .jasper (compilado previamente en Jaspersoft Studio)
-            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\Productos.jasper";
+            String reportPath = "src/main/resources/Productos.jasper";
 
             // Conectar a la base de datos
             conexion = DatabaseConnection.getConnection();

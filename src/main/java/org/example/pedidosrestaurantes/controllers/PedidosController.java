@@ -576,7 +576,7 @@ public class PedidosController {
         Connection conexion = null;
         try {
             // Ruta del archivo .jasper (debe estar compilado en Jaspersoft Studio)
-            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\Pedidos_Preparacion.jasper";
+            String reportPath = "src/main/resources/Pedidos_Preparacion.jasper";
 
             // Obtener conexión
             conexion = DatabaseConnection.getConnection();
@@ -620,8 +620,9 @@ public class PedidosController {
 
         Connection conexion = null;
         try {
-            // Ruta correcta del reporte .jasper
-            String reportPath = "C:\\Users\\alvar.ROSAL\\JaspersoftWorkspace\\GestionRestaurante\\ticketPedido.jasper";
+            // Rutas de los reportes
+            String reportPath = "src/main/resources/ticketPedido.jasper";
+            String subreportPath = "src/main/resources/detallePedido.jasper";
 
             // Conexión a la base de datos
             conexion = DatabaseConnection.getConnection();
@@ -630,20 +631,24 @@ public class PedidosController {
                 return;
             }
 
-            // **Inicializar el mapa de parámetros y asegurarse de que se envía bien**
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("idPedido", idPedido);
-
-            // **Verificar que el reporte se carga correctamente**
+            // Verificar que los reportes existen
             File reportFile = new File(reportPath);
-            if (!reportFile.exists()) {
-                mostrarAlerta("Error", "El archivo del informe no se encontró en la ruta especificada.");
+            File subreportFile = new File(subreportPath);
+
+            if (!reportFile.exists() || !subreportFile.exists()) {
+                mostrarAlerta("Error", "No se encontró el archivo del informe o el subreporte.");
                 return;
             }
 
+            // Cargar el reporte maestro
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportFile);
 
-            // **Ejecutar el informe filtrando por idPedido**
+            // **Enviar el ID del pedido como parámetro**
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("idPedido", idPedido);
+            parameters.put("SUBREPORT_DIR", subreportFile.getParent() + "\\"); // Ruta del subreporte
+
+            // Llenar el informe con datos
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conexion);
 
             // **Mostrar el ticket en JasperViewer**
@@ -660,6 +665,7 @@ public class PedidosController {
             }
         }
     }
+
 
 
     /**
