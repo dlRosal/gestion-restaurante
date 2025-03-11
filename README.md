@@ -102,3 +102,7 @@ Si deseas contribuir, abre un **Pull Request** o crea un **Issue** con tu propue
 
 ---
 
+## 📜 Licencia y derechos de autor
+© 2025 Álvaro del Rosal. Todos los derechos reservados.  
+Este proyecto está licenciado bajo la [Licencia MIT](LICENSE).
+
